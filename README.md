@@ -90,3 +90,10 @@ y gestión del estado dentro de una app moderna.
       dependencias
   <img width="1113" height="921" alt="image" src="https://github.com/user-attachments/assets/251fb476-4da3-450f-8e29-f121c56239cd" />
 
+## Pruebas Unitarias
+
+<img width="1917" height="671" alt="image" src="https://github.com/user-attachments/assets/c688c1f9-6fe1-46df-b874-7e5fcea0ade7" />
+
+<img width="1870" height="656" alt="image" src="https://github.com/user-attachments/assets/727af549-38dd-4784-9616-95841c083615" />
+
+
