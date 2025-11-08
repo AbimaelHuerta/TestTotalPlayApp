@@ -18,7 +18,8 @@ import javax.inject.Inject
 data class SearchState(
     val query: String = "",
     val predictions: List<PlacePrediction> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isLoading: Boolean= false
 )
 
 @OptIn(FlowPreview::class)
@@ -35,7 +36,6 @@ class SearchViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _queryFlow
-                .debounce(500)
                 .filter { it.length > 2 }
                 .collect { query ->
                     searchPlaces(query)
@@ -55,16 +55,20 @@ class SearchViewModel @Inject constructor(
 
     private fun searchPlaces(query: String) {
         viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
+
 
             repository.searchPlaces(query).fold(
                 onSuccess = { predictions ->
                     _state.value = _state.value.copy(
                         predictions = predictions,
+                        isLoading = false
                     )
                 },
                 onFailure = { error ->
                     _state.value = _state.value.copy(
-                        errorMessage = error.message ?: "Error desconocido"
+                        errorMessage = error.message ?: "Error desconocido",
+                        isLoading = false
                     )
                 }
             )

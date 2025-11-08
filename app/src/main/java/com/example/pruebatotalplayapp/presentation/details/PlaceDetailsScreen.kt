@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,8 +22,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.pruebatotalplayapp.data.model.PlaceDetail
 import com.example.pruebatotalplayapp.data.model.Review
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceDetailsScreen(
@@ -61,7 +60,6 @@ fun PlaceDetailsScreen(
                 .padding(paddingValues)
         ) {
             when {
-
                 state.errorMessage != null -> {
                     Column(
                         modifier = Modifier
@@ -89,6 +87,29 @@ fun PlaceDetailsScreen(
                         placeDetail = state.placeDetail!!,
                         photoUrls = state.photoUrls
                     )
+                }
+
+                else -> {
+                    //cuando no hay detalles disponibles
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.padding(24.dp)
+                        ) {
+                            Text(
+                                text = "Sin detalles",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(32.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -129,111 +150,91 @@ fun PlaceDetailsContent(
             }
         }
 
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+        // Si no hay fotos ni datos relevantes
+        if (
+            placeDetail.name.isNullOrEmpty() &&
+            placeDetail.formattedAddress.isNullOrEmpty() &&
+            placeDetail.rating == null
+        ) {
+            item {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
                     Text(
-                        text = placeDetail.name,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
+                        text = "Sin detalles",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(32.dp)
                     )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                }
+            }
+        } else {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
                         Text(
-                            text = placeDetail.formattedAddress,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = placeDetail.name,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
                         )
-                    }
 
-                    // Rating
-                    placeDetail.rating?.let { rating ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                            Text(
-                                text = "$rating",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            placeDetail.userRatingsTotal?.let { total ->
-                                Text(
-                                    text = "($total opiniones)",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-
-                    placeDetail.formattedPhoneNumber?.let { phone ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Phone,
+                                imageVector = Icons.Default.LocationOn,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = phone,
-                                style = MaterialTheme.typography.bodyMedium
+                                text = placeDetail.formattedAddress,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
 
-                    placeDetail.openingHours?.openNow?.let { openNow ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (openNow) {
-                                    MaterialTheme.colorScheme.tertiary
-                                } else {
-                                    MaterialTheme.colorScheme.error
+                        placeDetail.rating?.let { rating ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                                Text(
+                                    text = "$rating",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                placeDetail.userRatingsTotal?.let { total ->
+                                    Text(
+                                        text = "($total opiniones)",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
-                            )
-                            Text(
-                                text = if (openNow) "Abierto ahora" else "Cerrado",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (openNow) {
-                                    MaterialTheme.colorScheme.tertiary
-                                } else {
-                                    MaterialTheme.colorScheme.error
-                                },
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            }
                         }
                     }
                 }
             }
         }
 
+        // Comentarios
         placeDetail.reviews?.let { reviews ->
             if (reviews.isNotEmpty()) {
                 item {
@@ -248,6 +249,39 @@ fun PlaceDetailsContent(
                 items(reviews.take(5)) { review ->
                     ReviewCard(review = review)
                 }
+            } else {
+                item {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Sin comentarios",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(32.dp)
+                        )
+                    }
+                }
+            }
+        } ?: item {
+            // Si no contiene comentarios
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Sin comentarios",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(32.dp)
+                )
             }
         }
     }

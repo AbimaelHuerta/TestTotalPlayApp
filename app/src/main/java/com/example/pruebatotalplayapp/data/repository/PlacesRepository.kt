@@ -1,6 +1,7 @@
 package com.example.pruebatotalplayapp.data.repository
 
 
+import com.example.pruebatotalplayapp.BuildConfig
 import com.example.pruebatotalplayapp.data.model.PlaceDetail
 import com.example.pruebatotalplayapp.data.model.PlacePrediction
 import com.example.pruebatotalplayapp.data.remote.PlacesApiService
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class PlacesRepository @Inject constructor(
     private val apiService: PlacesApiService
 ) {
-    private val apiKey = "AIzaSyByspR_e5IGCdkyJZ1HAjLvWvvtX6kPzuU"
+    private val apiKey = BuildConfig.API_KEY
 
     suspend fun searchPlaces(query: String): Result<List<PlacePrediction>> {
         return withContext(Dispatchers.IO) {
